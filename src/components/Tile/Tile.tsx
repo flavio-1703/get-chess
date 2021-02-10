@@ -21,7 +21,7 @@ const Tile: React.FC<Props> = ({number, image}) => {
             <div className="tile white__tile">
                 <img src={image} />
             </div>
-        );
+        ); 
     }
 }
 
