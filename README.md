@@ -1,2 +1,3 @@
-# Chess game with react JS
+# Chess
+### A Chess game with with React Typescript
 
