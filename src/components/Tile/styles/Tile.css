@@ -1,0 +1,15 @@
+.tile {
+    color: whitesmoke;
+    display: grid;
+    place-content: center;
+    width: 100px;
+    height: 100px;
+}
+
+.black__tile {
+    background-color: #181818;
+}
+
+.white__tile {
+    background-color: whitesmoke;
+}
