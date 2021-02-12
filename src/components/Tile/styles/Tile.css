@@ -7,9 +7,28 @@
 }
 
 .black__tile {
-    background-color: #181818;
+    background-color: darkgray;
 }
 
 .white__tile {
     background-color: whitesmoke;
+}
+
+.tile .chesspiece {
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px;
+}
+
+/*
+This makes the piece grabbable
+*/
+.tile .chesspiece:hover {
+    cursor: grab;
+}
+
+.tile .chesspiece:active {
+    cursor: grabbing;
 }
