@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 //style
 import './styles/Chessboard.css';
 import Tile from '../Tile/Tile';
@@ -12,62 +12,62 @@ interface Piece {
     yPos: number;
 }
 
-const pieces: Piece[] = [];
 //i know this is terrible and redundant
 //i could use string interpolation on this but im not using local assets so this will do for now
 
-//Black pawns
+//initial board state
+const initalBoardState: Piece[] = [];
 for(let i: number = 0; i < 8; i++){
 
-pieces.push({
-    image: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png", 
-    xPos: i, 
-    yPos: 6});
+    initalBoardState.push({
+        image: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png", 
+        xPos: i, 
+        yPos: 6});
 };
 
-//white pawns
+            //white pawns
 for(let i: number = 0; i < 8; i++){
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png", 
     xPos: i, 
     yPos: 1});
 };
 
 //white rooks
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png",
     xPos: 7,
     yPos: 0    
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png",
     xPos: 0,
     yPos: 0    
 });
 
 //black rooks
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png",
     xPos: 0,
     yPos: 7    
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png",
     xPos: 7,
     yPos: 7    
 });
 
 //white knights
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png",
     xPos: 1,
     yPos: 0    
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png",
     xPos: 6,
     yPos: 0    
@@ -75,67 +75,67 @@ pieces.push({
 
 
 //black knights
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png",
     xPos: 1,
     yPos: 7   
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png",
     xPos: 6,
     yPos: 7    
 });
 
 //white bishop
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png",
     xPos: 2,
     yPos: 0   
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png",
     xPos: 5,
     yPos: 0    
 });
 
 //black bishops
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png",
     xPos: 2,
     yPos: 7   
 });
 
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png",
     xPos: 5,
     yPos: 7    
 });
 
 //white king
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png",
     xPos: 4,
     yPos: 0    
 });
 
 //white queen
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png",
     xPos: 3,
     yPos: 0    
 });
 
 //black king
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png",
     xPos: 4,
     yPos: 7   
 });
 
 //black queen
-pieces.push({
+initalBoardState.push({
     image: "https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png",
     xPos: 3,
     yPos: 7   
@@ -143,24 +143,31 @@ pieces.push({
 
 
 const Chessboard: React.FC = () => {
-    
+    const [activePiece, setActivePiece] = useState<HTMLElement | null >(null);
+    const [gridX, setGridX] = useState(0);
+    const [gridY, setGridY] = useState(0);
+    const [pieces, setPieces] = useState <Piece[]>(initalBoardState);
+
     const chessboardRef = useRef<HTMLDivElement>(null);
     
-    let activePiece: HTMLElement | null  = null;
+    
 
     const grabPiece = (e: React.MouseEvent) => {
         const element = e.target as HTMLElement;
-        if(element.classList.contains('chesspiece')) 
+        const chessboard = chessboardRef.current;
+        if(element.classList.contains('chesspiece') && chessboard) 
         {
+            setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100));
+            setGridY(Math.abs( Math.ceil((e.clientY - chessboard.clientTop - 800) / 100 )));
             //this makes it so when you click the piece it takes the piece
             //to the center of the mouse
-            const x = e.clientX -50;
+            const x = e.clientX - 50;
             const y = e.clientY - 50;
             element.style.position = 'absolute';
             element.style.left = `${x}px`;
             element.style.top  = `${y}px`;
 
-            activePiece = element;
+            setActivePiece(element);
         }
     };
 
@@ -172,8 +179,8 @@ const Chessboard: React.FC = () => {
         {
             const minX = chessboard.offsetLeft - 25;
             const minY = chessboard.offsetTop - 25;
-            const maxX = chessboard.offsetWidth - 25;
-            const maxY = chessboard.offsetHeight - 25;
+            const maxX = chessboard.offsetLeft + chessboard.clientWidth - 75;
+            const maxY = chessboard.offsetTop + chessboard.offsetHeight - 75;
 
             const x = e.clientX -50;
             const y = e.clientY - 50;
@@ -218,9 +225,29 @@ const Chessboard: React.FC = () => {
     //this make so when you release the piece it drops
     //works by simply by make the piece no loner active
     const dropPiece = (e: React.MouseEvent) => {
-        if(activePiece) 
+        //here we get the pieces' position relative to the board
+        const chessboard = chessboardRef.current;
+
+        if(activePiece && chessboard) 
         {
-            activePiece = null;
+            //relative position
+            //the math gives us grid positions
+            const dpp_x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
+            const dpp_y = Math.abs( Math.ceil((e.clientY - chessboard.clientTop - 800) / 100 ));
+
+            setPieces((value) => {
+            const pieces = value.map((p) => {
+                    if (p.xPos === gridX && p.yPos === gridY) {
+                           p.xPos = dpp_x;
+                           p.yPos = dpp_y;
+                    }
+                        return p;
+                    }
+                );
+                return pieces;
+            });
+
+            setActivePiece(null);
         }
     } 
 
